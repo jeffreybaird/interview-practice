@@ -10,5 +10,9 @@ RSpec.describe ProductsOfInts, "#get_products_of_all_ints_except_at_index" do
     it "does the thing even if all the numbers are the same" do
       expect(ProductsOfInts.get_products_of_all_ints_except_at_index([2,2,2,2])).to eq([8,8,8,8])
     end
+
+    it "does the thing even if all the numbers are zeros" do
+      expect(ProductsOfInts.get_products_of_all_ints_except_at_index([0,0,0,0])).to eq([0,0,0,0])
+    end
   end
 end
