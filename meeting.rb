@@ -2,24 +2,37 @@ require 'pry'
 module Meeting
 
   def self.condense_meeting_time(meeting_times)
-    condensed = []
-    size_of_condensed = 0
-    meeting_times.each do |meeting|
-      size_of_condensed = condensed.size
-      meeting_times.each do |meet|
-        temp = [meeting,meet].sort_by{|x| x.max}
-        condensed << condense(temp[0],temp[1]) if meetings_overlap?(temp[0],temp[1])
-      end
-      condensed << meeting if size_of_condensed == condensed.size
+    local_condensed = condensed(meeting_times)
+    if any_remaining_overlap?(local_condensed).all?
+      condense_meeting_time(local_condensed)
+    else
+      local_condensed
     end
-    condensed.uniq
   end
 
-  def self.any_remaining_overlap?(meetings, meeting_to_check=nil)
-    meeting_to_check = meetings.shift(1) unless meeting_to_check
+  def self.condensed(meeting_times)
+    times = []
+    size_of_condensed = 0
+    meeting_times.each do |meeting|
+      size_of_condensed = times.size
+      meeting_times.each do |meet|
+        temp = [meeting,meet].sort_by{|x| x.max}
+        times << condense(temp[0],temp[1]) if meetings_overlap?(temp[0],temp[1])
+      end
+      times << meeting if size_of_condensed == times.size
+    end
+    times.uniq
+  end
+
+  def self.any_remaining_overlap?(meetings)
+    return [false] if meetings.empty?
+    meetings = meetings.sort_by.sort_by{|x| x.max}
+    meeting_to_check = meetings.shift unless meeting_to_check
     if meetings.size == 1
-      m1,m2 = [meetings[0],meeting_to_check].sort_by{|x| x.max}
-      meetings_overlap?(m1,m2)
+      [meetings_overlap?(meeting_to_check, meetings[0])]
+    else
+      meetings.map{|m| meetings_overlap?(meeting_to_check,m) } + any_remaining_overlap?(meetings)
+    end
   end
 
   def self.meetings_overlap?(meeting1, meeting2)

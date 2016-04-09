@@ -21,7 +21,7 @@ RSpec.describe Meeting, "#condense_meeting_time" do
     end
 
     it "works if one meeting is all inclusive" do
-      expect(Meeting.condense_meeting_time([[1, 10], [2, 6], [3, 5], [7, 9] ])).to eq([1,10])
+      expect(Meeting.condense_meeting_time([[1, 10], [2, 6], [3, 5], [7, 9] ])).to eq([[1,10]])
     end
   end
 end
